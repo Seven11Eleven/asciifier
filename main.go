@@ -11,7 +11,7 @@ import (
 	"golang.org/x/image/draw"
 )
 
-var imgPath = "./bauka.png"
+var imgPath = "./images/Снимок экрана_20250224_155839.png"
 
 var (
 	gradient  = " .:!/r(lZ4H9W8$@"
@@ -48,7 +48,8 @@ func main() {
 	}
 
 	img = resizeImage(img, 200, 100)
-	img = grayscaleImage(img)
+	// img = grayscaleImage(img)
+
 	bounds := img.Bounds()
 
 	for y := 0; y < bounds.Max.Y; y++ {
@@ -73,6 +74,6 @@ func main() {
 
 			fmt.Printf("\033[38;2;%d;%d;%dm%s", r8, g8, b8, string(gradient[idx]))
 		}
-		fmt.Println()
+		fmt.Println("\033[0m")
 	}
 }
