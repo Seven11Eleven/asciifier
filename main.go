@@ -1,17 +1,22 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"image"
 	"image/color"
+	"image/jpeg"
 	"image/png"
+	"log"
 	"math"
 	"os"
+	"path/filepath"
 
 	"golang.org/x/image/draw"
+	"golang.org/x/image/webp"
 )
 
-var imgPath = "./images/Снимок экрана_20250224_155839.png"
+var imgPath = "./kachok.jpg"
 
 var (
 	gradient  = " .:!/r(lZ4H9W8$@"
@@ -36,13 +41,35 @@ func grayscaleImage(img image.Image) *image.Gray {
 	return grayImg
 }
 
-func main() {
-	file, _ := os.Open(imgPath)
-	defer file.Close()
-
-	img, err := png.Decode(file)
+func openImg(filename string) (image.Image, error) {
+	file, err := os.Open(filename)
 	if err != nil {
+		return nil, err
+	}
+	ext := filepath.Ext(filename)
+	switch ext {
+	case ".jpg", ".jpeg":
+		return jpeg.Decode(file)
+	case ".png":
+		return png.Decode(file)
+	case ".webp":
+		return webp.Decode(file)
+	default:
+		return nil, fmt.Errorf("unsupported file extension: %v", ext)
+	}
+}
 
+func main() {
+	inFlag := flag.String("input", "", "path to file to asciifying")
+	flag.Parse()
+
+	if *inFlag == "" {
+		log.Printf("no user's image provided")
+		*inFlag = imgPath
+	}
+
+	img, err := openImg(*inFlag)
+	if err != nil {
 		fmt.Print(err)
 		return
 	}
